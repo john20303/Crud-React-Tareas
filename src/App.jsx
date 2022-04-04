@@ -7,23 +7,57 @@ function App() {
   const [inputTarea,setInputTarea] = React.useState('');//éste state Esta asociado al input Ingrese Tarea.
   const [listaTareas,setListaTareas] = React.useState([]);//useSate asociado a la lista de tareas
   const [cambiarModoEditar, setCambiarModoEditar] = React.useState(false);
+  const [id,setId] = React.useState('');//Este se asocia al id de inputTarea al editar.
 
 
-// Función formulario crear tareas
+
+  // Función formulario crear tareas
   const formCrearTarea = (e) => {
+      e.preventDefault();
+      if(!inputTarea.trim()){
+        console.log('El campo, Ingrese Tarea, está vácio.');
+        return;
+      }
+      console.log(inputTarea);
+      setListaTareas([// dentro de la función llamamos nuestro setListaTareas.
+        ...listaTareas,{id: nanoid(),tarea: inputTarea }//listaTareas es donde se alamcenarán las tareas que vienen de = inputTarea
+      ]);
+      setInputTarea('');//Se llama para limpiar el cámpo inputTarea
+  }// Función formulario Crear tareas
+
+
+
+
+
+
+  // Función formulario Editar tareas
+  const formEditarTarea = (e) => {
     e.preventDefault();
     if(!inputTarea.trim()){
-      console.log('El campo, Ingrese Tarea, está vácio.');
+      console.log('El campo esta vacio!');
       return;
     }
-    console.log(inputTarea);
-    setListaTareas([// dentro de la función llamamos nuestro setListaTareas.
-      ...listaTareas,{id: nanoid(),tarea: inputTarea }//listaTareas es donde se alamcenarán las tareas que vienen de = inputTarea
-    ]);
-
+    const arrEditarTarea = listaTareas.map(item => item.id === id ? {id:id,tarea: inputTarea} : item)
+    setListaTareas(arrEditarTarea);
+    setCambiarModoEditar(false);//Lo pasamos a false
+    setInputTarea('');//Limpiamos el campo
+    setId('');
+    
     setInputTarea('');//Se llama para limpiar el cámpo inputTarea
-  }
-  // Función formulario crear tareas
+  }// Función formulario Editar tareas
+
+
+
+
+  // Función Editar tarea
+  const editarTarea = (item) => {//Ésta función esta asociada al botón editar
+    setCambiarModoEditar(true);
+    setInputTarea(item.tarea);
+    setId(item.id);
+    console.log(item);
+  }// Función Editar tarea
+
+
 
 
 
@@ -31,15 +65,10 @@ function App() {
   const eliminarTarea = (id) => {//solo se guardan en arrFiltrado, los res.id que sean diferentes, al id que viene como parámetro.
     const arrFiltrado = listaTareas.filter(res => (res.id !== id));
     setListaTareas(arrFiltrado);//actualizamos el contenido con arrFiltrado, x q se guardó la nueva lista de items.
-  }
-  // Función Eliminar tarea
+  }// Función Eliminar tarea
 
 
-  // Función Editar tarea
-  const editarTarea = (id) => {
-    setCambiarModoEditar(true);
-  }
-  // Función Editar tarea
+ 
 
 
   return (
@@ -58,7 +87,7 @@ function App() {
                 <li className="list-group-item" key={res.id}>
                   <span className="lead">{res.tarea}</span>
                   <button className="btn btn-danger btn-sm float-end" onClick={() => eliminarTarea(res.id)}>Eliminar</button>
-                  <button className="btn btn-warning btn-sm float-end mx-1" onClick={() => editarTarea(res.id)}>Editar</button>
+                  <button className="btn btn-warning btn-sm float-end mx-1" onClick={() => editarTarea(res)}>Editar</button>
               </li>
               ))
             }
@@ -75,7 +104,7 @@ function App() {
           </h4>
 
         {/* Formulario crear tarea*/}
-          <form onSubmit={formCrearTarea}>
+          <form onSubmit={cambiarModoEditar ? formEditarTarea : formCrearTarea}>
             <input 
               type="text" 
               className="form-control mb-2" 
