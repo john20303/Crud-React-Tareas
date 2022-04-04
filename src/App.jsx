@@ -8,6 +8,7 @@ function App() {
   const [listaTareas,setListaTareas] = React.useState([]);//useSate asociado a la lista de tareas
   const [cambiarModoEditar, setCambiarModoEditar] = React.useState(false);
   const [id,setId] = React.useState('');//Este se asocia al id de inputTarea al editar.
+  const [error,setError] = React.useState(null);
 
 
 
@@ -16,6 +17,7 @@ function App() {
       e.preventDefault();
       if(!inputTarea.trim()){
         console.log('El campo, Ingrese Tarea, está vácio.');
+        setError('El campo esta vácio.');
         return;
       }
       console.log(inputTarea);
@@ -23,6 +25,7 @@ function App() {
         ...listaTareas,{id: nanoid(),tarea: inputTarea }//listaTareas es donde se alamcenarán las tareas que vienen de = inputTarea
       ]);
       setInputTarea('');//Se llama para limpiar el cámpo inputTarea
+      setError(null);//Eliminamos el texto de error.
   }// Función formulario Crear tareas
 
 
@@ -35,6 +38,7 @@ function App() {
     e.preventDefault();
     if(!inputTarea.trim()){
       console.log('El campo esta vacio!');
+      setError('El campo esta vácio.');
       return;
     }
     const arrEditarTarea = listaTareas.map(item => item.id === id ? {id:id,tarea: inputTarea} : item)
@@ -43,6 +47,7 @@ function App() {
     setInputTarea('');//Limpiamos el campo
     setId('');
     
+    setError(null);//Eliminamos el texto de error.
     setInputTarea('');//Se llama para limpiar el cámpo inputTarea
   }// Función formulario Editar tareas
 
@@ -83,13 +88,19 @@ function App() {
           <h4 className="text-center">Lista de Tareas</h4>
           <ul className="list-group">
             {
-              listaTareas.map(res => (
-                <li className="list-group-item" key={res.id}>
-                  <span className="lead">{res.tarea}</span>
-                  <button className="btn btn-danger btn-sm float-end" onClick={() => eliminarTarea(res.id)}>Eliminar</button>
-                  <button className="btn btn-warning btn-sm float-end mx-1" onClick={() => editarTarea(res)}>Editar</button>
-              </li>
-              ))
+              listaTareas.length === 0 ? (
+                  <div className="alert alert-danger" role="alert">
+                     No hay tares disponibles!
+                  </div>
+              ) : (
+                listaTareas.map(res => (
+                  <li className="list-group-item" key={res.id}>
+                    <span className="lead">{res.tarea}</span>
+                    <button className="btn btn-danger btn-sm float-end" onClick={() => eliminarTarea(res.id)}>Eliminar</button>
+                    <button className="btn btn-warning btn-sm float-end mx-1" onClick={() => editarTarea(res)}>Editar</button>
+                </li>
+                ))
+              )
             }
           </ul>
         </div>
@@ -105,6 +116,13 @@ function App() {
 
         {/* Formulario crear tarea*/}
           <form onSubmit={cambiarModoEditar ? formEditarTarea : formCrearTarea}>
+            {
+              error ? (
+                <spam className='text-danger'>
+                    {error}
+                  </spam>
+              ) : null
+            }
             <input 
               type="text" 
               className="form-control mb-2" 
