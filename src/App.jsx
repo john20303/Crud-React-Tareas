@@ -46,7 +46,7 @@ function App() {
     setCambiarModoEditar(false);//Lo pasamos a false
     setInputTarea('');//Limpiamos el campo
     setId('');
-    
+
     setError(null);//Eliminamos el texto de error.
     setInputTarea('');//Se llama para limpiar el cámpo inputTarea
   }// Función formulario Editar tareas
@@ -118,9 +118,9 @@ function App() {
           <form onSubmit={cambiarModoEditar ? formEditarTarea : formCrearTarea}>
             {
               error ? (
-                <spam className='text-danger'>
+                <span className='text-danger'>
                     {error}
-                  </spam>
+                  </span>
               ) : null
             }
             <input 
